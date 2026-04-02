@@ -19,8 +19,8 @@ const decisions: Decision[] = [
 
 export function DecisionPanel({ onSimulate }: { onSimulate: () => void }) {
   return (
-    <div className="glass-panel p-4 w-80 shrink-0 flex flex-col">
-      <div className="flex items-center gap-2 mb-4">
+    <div className="glass-panel p-3 md:p-4 xl:w-80 shrink-0 flex flex-col max-h-[400px] xl:max-h-none">
+      <div className="flex items-center gap-2 mb-3 md:mb-4">
         <Shield className="w-4 h-4 text-primary" />
         <h3 className="section-label">Recommended Actions</h3>
       </div>
@@ -29,13 +29,13 @@ export function DecisionPanel({ onSimulate }: { onSimulate: () => void }) {
         {decisions.map((d, i) => (
           <motion.div
             key={d.id}
-            className="glass-panel-hover p-3 cursor-pointer"
+            className="glass-panel-hover p-2.5 md:p-3 cursor-pointer"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: i * 0.08 }}
           >
-            <div className="flex items-start gap-2 mb-2">
-              <span className={`text-[9px] font-bold uppercase px-1.5 py-0.5 rounded ${
+            <div className="flex items-start gap-2 mb-1.5 md:mb-2">
+              <span className={`text-[8px] md:text-[9px] font-bold uppercase px-1.5 py-0.5 rounded ${
                 d.priority === "high" ? "bg-glow-red/15 priority-high" :
                 d.priority === "medium" ? "bg-glow-gold/15 priority-medium" :
                 "bg-glow-emerald/15 priority-low"
@@ -43,8 +43,8 @@ export function DecisionPanel({ onSimulate }: { onSimulate: () => void }) {
                 {d.priority}
               </span>
             </div>
-            <p className="text-xs font-medium text-foreground mb-2 leading-relaxed">{d.title}</p>
-            <div className="flex items-center gap-4 text-[10px] font-mono text-muted-foreground">
+            <p className="text-[10px] md:text-xs font-medium text-foreground mb-1.5 md:mb-2 leading-relaxed">{d.title}</p>
+            <div className="flex items-center gap-3 md:gap-4 text-[9px] md:text-[10px] font-mono text-muted-foreground">
               <span>Impact: <span className="glow-text-blue">{d.impactScore}</span></span>
               <span>Risk ↓ <span className="glow-text-emerald">{d.riskReduction}%</span></span>
             </div>
@@ -54,7 +54,7 @@ export function DecisionPanel({ onSimulate }: { onSimulate: () => void }) {
 
       <button
         onClick={onSimulate}
-        className="mt-4 w-full flex items-center justify-center gap-2 py-2.5 rounded-lg bg-primary/10 border border-primary/30 text-primary text-xs font-semibold hover:bg-primary/20 transition-colors"
+        className="mt-3 md:mt-4 w-full flex items-center justify-center gap-2 py-2 md:py-2.5 rounded-lg bg-primary/10 border border-primary/30 text-primary text-[10px] md:text-xs font-semibold hover:bg-primary/20 transition-colors"
         style={{ boxShadow: "0 0 20px -5px hsl(192 100% 50% / 0.3)" }}
       >
         <Zap className="w-3.5 h-3.5" />

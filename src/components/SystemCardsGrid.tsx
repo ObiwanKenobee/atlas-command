@@ -1,10 +1,27 @@
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { TrendingUp, Truck, Droplets, MessageSquare, Eye } from "lucide-react";
 import {
   AreaChart, Area, BarChart, Bar, ResponsiveContainer, Tooltip, XAxis,
 } from "recharts";
 
-const riskData = [
+function useLiveChartData(baseData: { day: string; risk: number }[], variance = 8, interval = 4000) {
+  const [data, setData] = useState(baseData);
+  useEffect(() => {
+    const id = setInterval(() => {
+      setData((prev) =>
+        prev.map((d) => ({
+          ...d,
+          risk: Math.max(10, Math.min(100, d.risk + (Math.random() - 0.45) * variance)),
+        }))
+      );
+    }, interval);
+    return () => clearInterval(id);
+  }, []);
+  return data;
+}
+
+const baseRiskData = [
   { day: "Mon", risk: 42 }, { day: "Tue", risk: 55 }, { day: "Wed", risk: 48 },
   { day: "Thu", risk: 67 }, { day: "Fri", risk: 72 }, { day: "Sat", risk: 61 }, { day: "Sun", risk: 78 },
 ];
@@ -28,13 +45,16 @@ const sentimentAlerts = [
 ];
 
 export function SystemCardsGrid() {
+  const riskData = useLiveChartData(baseRiskData);
+
   return (
-    <div className="grid grid-cols-3 gap-3">
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2 md:gap-3">
       {/* Risk Forecast */}
-      <motion.div className="glass-panel-hover p-4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+      <motion.div className="glass-panel-hover p-3 md:p-4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
         <div className="flex items-center gap-2 mb-3">
           <TrendingUp className="w-3.5 h-3.5 text-glow-red" />
           <span className="section-label">Risk Forecast</span>
+          <span className="ml-auto text-[8px] font-mono text-primary animate-pulse">● LIVE</span>
         </div>
         <ResponsiveContainer width="100%" height={100}>
           <AreaChart data={riskData}>
@@ -46,14 +66,14 @@ export function SystemCardsGrid() {
             </defs>
             <XAxis dataKey="day" tick={{ fontSize: 9, fill: "hsl(215 20% 55%)" }} axisLine={false} tickLine={false} />
             <Tooltip contentStyle={{ background: "hsl(222 41% 9%)", border: "1px solid hsl(222 20% 20%)", borderRadius: 8, fontSize: 11 }} />
-            <Area type="monotone" dataKey="risk" stroke="hsl(0 84% 60%)" fill="url(#riskGrad)" strokeWidth={2} />
+            <Area type="monotone" dataKey="risk" stroke="hsl(0 84% 60%)" fill="url(#riskGrad)" strokeWidth={2} animationDuration={800} />
           </AreaChart>
         </ResponsiveContainer>
-        <p className="text-[10px] text-muted-foreground mt-2">7-day probability trend • <span className="priority-high">78% peak</span></p>
+        <p className="text-[9px] md:text-[10px] text-muted-foreground mt-2">7-day probability trend • <span className="priority-high">streaming</span></p>
       </motion.div>
 
       {/* Resource Flow */}
-      <motion.div className="glass-panel-hover p-4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
+      <motion.div className="glass-panel-hover p-3 md:p-4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
         <div className="flex items-center gap-2 mb-3">
           <Truck className="w-3.5 h-3.5 text-glow-emerald" />
           <span className="section-label">Resource Flow</span>
@@ -65,11 +85,11 @@ export function SystemCardsGrid() {
             <Bar dataKey="flow" fill="hsl(153 100% 45%)" radius={[3, 3, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
-        <p className="text-[10px] text-muted-foreground mt-2">Allocation efficiency across sectors</p>
+        <p className="text-[9px] md:text-[10px] text-muted-foreground mt-2">Allocation efficiency across sectors</p>
       </motion.div>
 
       {/* Infrastructure Health */}
-      <motion.div className="glass-panel-hover p-4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
+      <motion.div className="glass-panel-hover p-3 md:p-4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
         <div className="flex items-center gap-2 mb-3">
           <Droplets className="w-3.5 h-3.5 text-glow-blue" />
           <span className="section-label">Infrastructure Health</span>
@@ -95,7 +115,7 @@ export function SystemCardsGrid() {
       </motion.div>
 
       {/* Community Sentiment */}
-      <motion.div className="glass-panel-hover p-4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}>
+      <motion.div className="glass-panel-hover p-3 md:p-4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}>
         <div className="flex items-center gap-2 mb-3">
           <MessageSquare className="w-3.5 h-3.5 text-glow-gold" />
           <span className="section-label">Community Sentiment</span>
@@ -113,13 +133,13 @@ export function SystemCardsGrid() {
         </div>
       </motion.div>
 
-      {/* Ethical AI Panel - spans 2 cols */}
-      <motion.div className="glass-panel-hover p-4 col-span-2" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 }}>
+      {/* Ethical AI Panel */}
+      <motion.div className="glass-panel-hover p-3 md:p-4 md:col-span-2" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 }}>
         <div className="flex items-center gap-2 mb-3">
           <Eye className="w-3.5 h-3.5 text-glow-purple" />
           <span className="section-label">Ethical AI Governance</span>
         </div>
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4">
           <div>
             <p className="text-[10px] text-muted-foreground mb-1">Bias Detection</p>
             <div className="flex items-center gap-2">
